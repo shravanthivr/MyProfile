@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Shravanthi Vadrevu — AI Engineer & Full Stack</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #080c10;
+    --bg2: #0d1117;
+    --bg3: #111820;
+    --border: rgba(140, 210, 255, 0.12);
+    --border-hover: rgba(140, 210, 255, 0.28);
+    --ice: #8cd2ff;
+    --ice-dim: rgba(140, 210, 255, 0.55);
+    --ice-glow: rgba(140, 210, 255, 0.08);
+    --white: #e8f4ff;
+    --muted: #6b8399;
+    --muted2: #3d5266;
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-mono: 'Space Mono', monospace;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: var(--font-display);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    height: 52px;
+    background: rgba(8, 12, 16, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--ice);
+    letter-spacing: 0.05em;
+  }
+  .nav-logo span { color: var(--muted); }
+  .nav-links { display: flex; gap: 1.5rem; }
+  .nav-links a {
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--ice); }
+  .nav-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--muted);
+    font-family: var(--font-mono);
+  }
+  .status-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #4ade80;
+    animation: pulse-dot 2s infinite;
+  }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* ─── DESKTOP (BENTO) ─── */
+  #desktop {
+    padding-top: 52px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .bento-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: auto;
+    gap: 12px;
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .tile {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.25s;
+  }
+  .tile:hover { border-color: var(--border-hover); }
+  .tile::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--ice-glow);
+    opacity: 0;
+    transition: opacity 0.25s;
+    pointer-events: none;
+  }
+  .tile:hover::before { opacity: 1; }
+
+  /* tile spans */
+  .tile-hero    { grid-column: span 7; grid-row: span 2; min-height: 320px; }
+  .tile-status  { grid-column: span 5; grid-row: span 1; }
+  .tile-chat    { grid-column: span 5; grid-row: span 3; min-height: 380px; }
+  .tile-skills  { grid-column: span 7; grid-row: span 2; min-height: 280px; }
+  .tile-projects{ grid-column: span 7; grid-row: span 1; }
+  .tile-writing { grid-column: span 5; grid-row: span 1; }
+
+  /* ─── HERO TILE ─── */
+  .hero-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ice-dim);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 1.25rem;
+  }
+  .hero-name {
+    font-size: clamp(2.4rem, 4vw, 3.4rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--white);
+    margin-bottom: 0.75rem;
+  }
+  .hero-name .ice { color: var(--ice); }
+
+  .hero-role {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+    min-height: 1.5em;
+  }
+  .role-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1em;
+    background: var(--ice);
+    margin-left: 2px;
+    vertical-align: middle;
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  .hero-desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 520px;
+    margin-bottom: 2rem;
+  }
+  .hero-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 18px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    font-family: var(--font-display);
+  }
+  .btn-primary {
+    background: var(--ice);
+    color: #050810;
+  }
+  .btn-primary:hover { background: #b8e4ff; }
+  .btn-ghost {
+    background: transparent;
+    color: var(--ice);
+    border: 1px solid var(--border-hover);
+  }
+  .btn-ghost:hover { background: var(--ice-glow); border-color: var(--ice); }
+
+  /* ─── STATUS TILE ─── */
+  .status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .stat-item { }
+  .stat-label {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .stat-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--white);
+  }
+  .stat-value .unit { font-size: 13px; color: var(--muted); font-weight: 400; margin-left: 2px; }
+  .tile-label {
+    font-size: 10px;
+    font-family: var(--font-mono);
+    color: var(--muted2);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .tile-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ─── CHAT TILE ─── */
+  #chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-bottom: 8px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--muted2) transparent;
+  }
+  .chat-tile-inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 10px;
+  }
+  .chat-bubble {
+    max-width: 88%;
+    padding: 9px 13px;
+    border-radius: 10px;
+    font-size: 13px;
+    line-height: 1.55;
+  }
+  .bubble-user {
+    align-self: flex-end;
+    background: rgba(140, 210, 255, 0.14);
+    border: 1px solid rgba(140, 210, 255, 0.22);
+    color: var(--white);
+  }
+  .bubble-ai {
+    align-self: flex-start;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+  .bubble-ai strong { color: var(--white); }
+  .bubble-sender {
+    font-size: 10px;
+    font-family: var(--font-mono);
+    color: var(--muted2);
+    margin-bottom: 3px;
+  }
+  .chat-input-row {
+    display: flex;
+    gap: 8px;
+  }
+  .chat-input {
+    flex: 1;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 9px 12px;
+    color: var(--white);
+    font-size: 13px;
+    font-family: var(--font-display);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .chat-input::placeholder { color: var(--muted2); }
+  .chat-input:focus { border-color: rgba(140, 210, 255, 0.4); }
+  .chat-send {
+    background: var(--ice);
+    border: none;
+    border-radius: var(--radius-sm);
+    color: #050810;
+    padding: 9px 14px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+  }
+  .chat-send:hover { background: #b8e4ff; }
+  .chat-suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .suggestion-chip {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 10px;
+    font-size: 11px;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: var(--font-display);
+    transition: all 0.2s;
+  }
+  .suggestion-chip:hover { border-color: var(--ice-dim); color: var(--ice); }
+  .typing-indicator {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    padding: 10px 13px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    align-self: flex-start;
+    width: fit-content;
+  }
+  .typing-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--muted);
+    animation: typing 1.2s infinite;
+  }
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes typing {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-4px); opacity: 1; }
+  }
+
+  /* ─── KNOWLEDGE GRAPH (SKILLS) ─── */
+  #graph-svg { width: 100%; height: 100%; display: block; }
+  .tile-skills { padding: 1rem; }
+  .graph-tooltip {
+    position: absolute;
+    background: var(--bg);
+    border: 1px solid var(--border-hover);
+    border-radius: var(--radius-sm);
+    padding: 6px 10px;
+    font-size: 11px;
+    color: var(--ice);
+    font-family: var(--font-mono);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 10;
+  }
+
+  /* ─── PROJECTS TILE ─── */
+  .projects-scroll {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--muted2) transparent;
+    padding-bottom: 4px;
+  }
+  .project-card {
+    flex: 0 0 220px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+  }
+  .project-card:hover { border-color: var(--border-hover); }
+  .project-tag {
+    font-size: 9px;
+    font-family: var(--font-mono);
+    color: var(--ice-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+  .project-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 5px;
+  }
+  .project-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .project-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 10px;
+  }
+  .stack-badge {
+    font-size: 9px;
+    font-family: var(--font-mono);
+    padding: 2px 6px;
+    border-radius: 3px;
+    background: rgba(140, 210, 255, 0.08);
+    color: var(--ice-dim);
+    border: 1px solid rgba(140, 210, 255, 0.12);
+  }
+
+  /* ─── WRITING / BUILD IN PUBLIC TILE ─── */
+  .feed-item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .feed-item:last-child { border-bottom: none; }
+  .feed-icon {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    background: rgba(140, 210, 255, 0.08);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+  .feed-content { flex: 1; min-width: 0; }
+  .feed-title {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--white);
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .feed-meta {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: var(--font-mono);
+  }
+
+  /* ─── SECTIONS BELOW BENTO ─── */
+  section {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 60px 20px;
+  }
+  .section-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ice-dim);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+  .section-title {
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--white);
+    margin-bottom: 2.5rem;
+  }
+
+  /* ─── PROJECTS FULL ─── */
+  #projects { padding-top: 20px; }
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+  }
+  .project-full-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    transition: border-color 0.25s;
+    text-decoration: none;
+  }
+  .project-full-card:hover { border-color: var(--border-hover); }
+  .project-full-card .project-tag { margin-bottom: 8px; }
+  .project-full-card .project-name { font-size: 16px; margin-bottom: 8px; }
+  .project-full-card .project-desc { font-size: 13px; line-height: 1.6; }
+
+  /* ─── ABOUT / TIMELINE ─── */
+  .timeline { position: relative; }
+  .timeline-line {
+    position: absolute;
+    left: 0;
+    top: 8px; bottom: 8px;
+    width: 1px;
+    background: var(--border);
+  }
+  .timeline-item {
+    padding-left: 2rem;
+    position: relative;
+    margin-bottom: 2rem;
+  }
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -3px;
+    top: 8px;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--ice);
+  }
+  .timeline-role {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 2px;
+  }
+  .timeline-company {
+    font-size: 13px;
+    color: var(--ice-dim);
+    font-family: var(--font-mono);
+    margin-bottom: 4px;
+  }
+  .timeline-period {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    margin-bottom: 8px;
+  }
+  .timeline-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  /* ─── CONTACT ─── */
+  #contact-section {
+    text-align: center;
+    padding: 80px 20px;
+    border-top: 1px solid var(--border);
+  }
+  .contact-links {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+  }
+  .contact-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 13px;
+    transition: all 0.2s;
+    font-family: var(--font-mono);
+  }
+  .contact-link:hover { border-color: var(--ice); color: var(--ice); }
+
+  footer {
+    text-align: center;
+    padding: 2rem;
+    font-size: 11px;
+    color: var(--muted2);
+    font-family: var(--font-mono);
+    border-top: 1px solid var(--border);
+  }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--muted2); border-radius: 3px; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    .tile-hero, .tile-status, .tile-chat, .tile-skills, .tile-projects, .tile-writing {
+      grid-column: span 12;
+    }
+    .tile-skills { min-height: 260px; }
+    .nav-links { display: none; }
+  }
+
+  @media (max-width: 600px) {
+    .hero-name { font-size: 2rem; }
+    .bento-grid { padding: 12px; gap: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">shravanthi<span>.os</span></div>
+  <div class="nav-links">
+    <a href="#desktop">home</a>
+    <a href="#projects">projects</a>
+    <a href="#experience">experience</a>
+    <a href="#contact-section">contact</a>
+  </div>
+  <div class="nav-status">
+    <div class="status-dot"></div>
+    available for opportunities
+  </div>
+</nav>
+
+<!-- BENTO DESKTOP -->
+<div id="desktop">
+  <div class="bento-grid">
+
+    <!-- HERO TILE -->
+    <div class="tile tile-hero">
+      <div class="hero-eyebrow">// portfolio v2.0 — shravanthi.os</div>
+      <h1 class="hero-name">
+        Shravanthi<br>
+        <span class="ice">Vadrevu</span>
+      </h1>
+      <div class="hero-role" id="role-text">
+        <span id="role-display"></span><span class="role-cursor"></span>
+      </div>
+      <p class="hero-desc">
+        AI Engineer & Full Stack architect with 12+ years building products people rely on.
+        Currently focused on RAG systems, vector search, and LLM integration —
+        bridging deep frontend expertise with modern ML pipelines.
+      </p>
+      <div class="hero-actions">
+        <a href="https://github.com/shravanthivr?tab=repositories" target="_blank" class="btn btn-primary">↗ View Work</a>
+        <a href="https://www.linkedin.com/in/shravanthi-vadrevu-radha/" target="_blank" class="btn btn-ghost">LinkedIn</a>
+        <a href="https://shravanthivr.substack.com" target="_blank" class="btn btn-ghost">Substack</a>
+      </div>
+    </div>
+
+    <!-- STATUS TILE -->
+    <div class="tile tile-status">
+      <div class="tile-label">system stats</div>
+      <div class="status-grid">
+        <div class="stat-item">
+          <div class="stat-label">experience</div>
+          <div class="stat-value">12<span class="unit">yrs</span></div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">current focus</div>
+          <div class="stat-value" style="font-size:15px; padding-top:4px; color:var(--ice)">RAG + LLMs</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">location</div>
+          <div class="stat-value" style="font-size:15px; padding-top:4px">US 🇺🇸</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">status</div>
+          <div class="stat-value" style="font-size:13px; padding-top:4px; color:#4ade80">● Open to work</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI CHAT TILE -->
+    <div class="tile tile-chat">
+      <div class="tile-label">ask shravanthi.ai</div>
+      <div class="chat-tile-inner">
+        <div id="chat-messages">
+          <div>
+            <div class="bubble-sender">shravanthi.ai</div>
+            <div class="chat-bubble bubble-ai">
+              Hi! I'm Shravanthi's AI assistant. I know her full background — projects, skills, experience, and writing. Ask me anything! 👋
+            </div>
+          </div>
+        </div>
+        <div class="chat-suggestions" id="suggestions">
+          <button class="suggestion-chip" onclick="sendSuggestion(this)">What RAG projects has she built?</button>
+          <button class="suggestion-chip" onclick="sendSuggestion(this)">What's her tech stack?</button>
+          <button class="suggestion-chip" onclick="sendSuggestion(this)">Is she available to hire?</button>
+          <button class="suggestion-chip" onclick="sendSuggestion(this)">Tell me about her AI work</button>
+        </div>
+        <div class="chat-input-row">
+          <input
+            class="chat-input"
+            id="chat-input"
+            type="text"
+            placeholder="Ask about skills, projects, experience…"
+            onkeydown="if(event.key==='Enter') sendChat()"
+          />
+          <button class="chat-send" onclick="sendChat()">↑</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- KNOWLEDGE GRAPH TILE -->
+    <div class="tile tile-skills" style="position:relative; padding: 1rem;">
+      <div class="tile-label" style="margin-bottom:0.5rem; padding: 0 0.5rem;">skill graph — click to explore</div>
+      <div class="graph-tooltip" id="graph-tooltip"></div>
+      <svg id="graph-svg"></svg>
+    </div>
+
+    <!-- PROJECTS TILE -->
+    <div class="tile tile-projects">
+      <div class="tile-label">recent builds</div>
+      <div class="projects-scroll">
+        <a href="https://github.com/shravanthivr/PromptCraft" target="_blank" class="project-card">
+          <div class="project-tag">AI · React</div>
+          <div class="project-name">PromptCraft</div>
+          <div class="project-desc">ChatGPT-powered app for generating titles, summaries, and rewrites.</div>
+          <div class="project-stack">
+            <span class="stack-badge">React</span>
+            <span class="stack-badge">OpenAI API</span>
+            <span class="stack-badge">TypeScript</span>
+          </div>
+        </a>
+        <a href="#" class="project-card">
+          <div class="project-tag">AI · RAG · Vector DB</div>
+          <div class="project-name">Hotel Revenue RAG</div>
+          <div class="project-desc">Hybrid dense+BM25 retrieval with cross-encoder reranking over hotel occupancy data.</div>
+          <div class="project-stack">
+            <span class="stack-badge">Pinecone</span>
+            <span class="stack-badge">LangGraph</span>
+            <span class="stack-badge">Llama 3.3</span>
+            <span class="stack-badge">BGE-small</span>
+          </div>
+        </a>
+        <a href="https://github.com/shravanthivr/weatherapp-react" target="_blank" class="project-card">
+          <div class="project-tag">React · API</div>
+          <div class="project-name">Weather App</div>
+          <div class="project-desc">Fetches & displays real-time weather using OpenWeatherMap API.</div>
+          <div class="project-stack">
+            <span class="stack-badge">React</span>
+            <span class="stack-badge">OpenWeatherMap</span>
+          </div>
+        </a>
+        <a href="https://github.com/shravanthivr/SearchComponent" target="_blank" class="project-card">
+          <div class="project-tag">React · UX</div>
+          <div class="project-name">Search Component</div>
+          <div class="project-desc">Autocomplete search for medicines with suggestions and keyboard nav.</div>
+          <div class="project-stack">
+            <span class="stack-badge">React</span>
+            <span class="stack-badge">TypeScript</span>
+          </div>
+        </a>
+        <a href="#" class="project-card">
+          <div class="project-tag">EdTech · D3.js</div>
+          <div class="project-name">KidLearn Assessment</div>
+          <div class="project-desc">Children's assessment web app with interactive D3 visualizations.</div>
+          <div class="project-stack">
+            <span class="stack-badge">Vite</span>
+            <span class="stack-badge">React</span>
+            <span class="stack-badge">D3.js</span>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- BUILD IN PUBLIC / WRITING TILE -->
+    <div class="tile tile-writing">
+      <div class="tile-label">build in public</div>
+      <div class="feed-item">
+        <div class="feed-icon">✍️</div>
+        <div class="feed-content">
+          <div class="feed-title">Learning RAG: from chunks to cross-encoder reranking</div>
+          <div class="feed-meta">substack · recent</div>
+        </div>
+      </div>
+      <div class="feed-item">
+        <div class="feed-icon">⚙️</div>
+        <div class="feed-content">
+          <div class="feed-title">Building Hotel Revenue RAG with Pinecone + Nebius</div>
+          <div class="feed-meta">project · in progress</div>
+        </div>
+      </div>
+      <div class="feed-item">
+        <div class="feed-icon">📐</div>
+        <div class="feed-content">
+          <div class="feed-title">Consent strategy architecture — vendor abstraction over OneTrust</div>
+          <div class="feed-meta">work · shipped</div>
+        </div>
+      </div>
+      <div class="feed-item">
+        <div class="feed-icon">🤖</div>
+        <div class="feed-content">
+          <div class="feed-title">LangChain weather agent with ReAct loops</div>
+          <div class="feed-meta">learning · shipped</div>
+        </div>
+      </div>
+      <a href="https://shravanthivr.substack.com" target="_blank" class="btn btn-ghost" style="width:100%;justify-content:center;margin-top:12px;font-size:12px;">
+        Read all writing →
+      </a>
+    </div>
+
+  </div><!-- /bento-grid -->
+</div><!-- /desktop -->
+
+<!-- FULL PROJECTS SECTION -->
+<section id="projects">
+  <div class="section-eyebrow">// projects</div>
+  <h2 class="section-title">Things I've built</h2>
+  <div class="projects-grid">
+    <a href="#" class="project-full-card">
+      <div class="project-tag">AI · RAG · Vector Search</div>
+      <div class="project-name">Hotel Revenue RAG System</div>
+      <div class="project-desc">A full RAG pipeline using hybrid dense+BM25 retrieval with cross-encoder reranking over hotel occupancy data. Uses Pinecone for vector storage, BGE-small for local embeddings, and Nebius (Llama 3.3-70B) for generation. Multi-namespace dataset, LangGraph orchestration.</div>
+      <div class="project-stack" style="margin-top:14px">
+        <span class="stack-badge">Pinecone</span><span class="stack-badge">LangGraph</span>
+        <span class="stack-badge">BGE-small</span><span class="stack-badge">Llama 3.3</span>
+        <span class="stack-badge">Python</span><span class="stack-badge">Neo4j</span>
+      </div>
+    </a>
+    <a href="https://github.com/shravanthivr/PromptCraft" target="_blank" class="project-full-card">
+      <div class="project-tag">AI · React · OpenAI</div>
+      <div class="project-name">PromptCraft</div>
+      <div class="project-desc">A React app for generating titles, summaries, rephrases and more using the ChatGPT API. Clean UX focused on helping writers and content creators use AI effectively.</div>
+      <div class="project-stack" style="margin-top:14px">
+        <span class="stack-badge">React</span><span class="stack-badge">TypeScript</span>
+        <span class="stack-badge">OpenAI API</span>
+      </div>
+    </a>
+    <a href="#" class="project-full-card">
+      <div class="project-tag">EdTech · Vite · D3.js</div>
+      <div class="project-name">KidLearn Assessment App</div>
+      <div class="project-desc">A children's assessment web app with interactive D3 data visualizations. Full-stack Vite + React build deployed to Vercel. Designed for engagement and accessibility.</div>
+      <div class="project-stack" style="margin-top:14px">
+        <span class="stack-badge">Vite</span><span class="stack-badge">React</span>
+        <span class="stack-badge">D3.js</span><span class="stack-badge">Vercel</span>
+      </div>
+    </a>
+    <a href="#" class="project-full-card">
+      <div class="project-tag">Agentic AI · LangChain</div>
+      <div class="project-name">LangChain Weather Agent</div>
+      <div class="project-desc">A ReAct-loop weather agent built in LangChain while learning agentic AI patterns. Runs in Jupyter notebooks, integrates live weather API via tool calls.</div>
+      <div class="project-stack" style="margin-top:14px">
+        <span class="stack-badge">LangChain</span><span class="stack-badge">Python</span>
+        <span class="stack-badge">ReAct</span>
+      </div>
+    </a>
+    <a href="https://github.com/shravanthivr/weatherapp-react" target="_blank" class="project-full-card">
+      <div class="project-tag">React · API Integration</div>
+      <div class="project-name">Weather App</div>
+      <div class="project-desc">Real-time weather data fetched and displayed using OpenWeatherMap API. Built as a clean, focused React component exercise.</div>
+      <div class="project-stack" style="margin-top:14px">
+        <span class="stack-badge">React</span><span class="stack-badge">OpenWeatherMap</span>
+      </div>
+    </a>
+    <a href="https://github.com/shravanthivr/SearchComponent" target="_blank" class="project-full-card">
+      <div class="project-tag">React · UX · Accessibility</div>
+      <div class="project-name">Autocomplete Search Component</div>
+      <div class="project-desc">Accessible autocomplete search component for medicines with keyboard navigation, suggestions, and filtering. Production-quality reusable component.</div>
+      <div class="project-stack" style="margin-top:14px">
+        <span class="stack-badge">React</span><span class="stack-badge">TypeScript</span>
+        <span class="stack-badge">Accessibility</span>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- EXPERIENCE SECTION -->
+<section id="experience">
+  <div class="section-eyebrow">// experience</div>
+  <h2 class="section-title">Where I've worked</h2>
+  <div class="timeline">
+    <div class="timeline-line"></div>
+    <div class="timeline-item">
+      <div class="timeline-role">Senior Full Stack Engineer / Team Lead</div>
+      <div class="timeline-company">Consent Strategy Platform</div>
+      <div class="timeline-period">2023 — present</div>
+      <div class="timeline-desc">
+        Leading consent strategy product serving as system of record for customer profile data. Designed vendor-abstraction layer over OneTrust and Adobe Campaign. Stack: Spring WebFlux, Cassandra, Kafka. Architected rules engine with Drools and Adapter/Strategy patterns. Privacy compliance across 130+ countries for a hotel chain context.
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-role">Senior Frontend Engineer</div>
+      <div class="timeline-company">ScienceLogic</div>
+      <div class="timeline-period">Prior</div>
+      <div class="timeline-desc">
+        Led frontend architecture for enterprise observability platform. Deep work in React, TypeScript, GraphQL, and complex data visualization.
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-role">Software Engineer</div>
+      <div class="timeline-company">Capital One</div>
+      <div class="timeline-period">Prior</div>
+      <div class="timeline-desc">
+        Built and maintained financial product features. React, Redux, and cross-team API integration work at scale.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact-section" style="max-width:100%; padding: 80px 20px; border-top: 1px solid var(--border); text-align:center;">
+  <div class="section-eyebrow" style="text-align:center">// contact</div>
+  <h2 class="section-title" style="margin-bottom:0.5rem">Let's build something.</h2>
+  <p style="color:var(--muted); font-size:15px; margin-bottom:2rem">Open to AI engineering, full stack, and senior leadership roles.</p>
+  <div class="contact-links">
+    <a href="mailto:shravanthivadrevu@gmail.com" class="contact-link">✉ email</a>
+    <a href="https://github.com/shravanthivr" target="_blank" class="contact-link">⌥ github</a>
+    <a href="https://www.linkedin.com/in/shravanthi-vadrevu-radha/" target="_blank" class="contact-link">⬡ linkedin</a>
+    <a href="https://shravanthivr.substack.com" target="_blank" class="contact-link">✍ substack</a>
+  </div>
+</section>
+
+<footer>
+  © 2026 Shravanthi Vadrevu · built with intention · shravanthi.os
+</footer>
+
+<script>
+/* ─── ROLE TYPEWRITER ─── */
+const roles = [
+  'AI Engineer',
+  'Full Stack Architect',
+  'RAG Pipeline Builder',
+  'React + TypeScript Lead',
+  'LLM Integration Specialist'
+];
+let ri = 0, ci = 0, deleting = false;
+const roleEl = document.getElementById('role-display');
+function typeRole() {
+  const word = roles[ri];
+  if (!deleting) {
+    roleEl.textContent = word.slice(0, ++ci);
+    if (ci === word.length) { deleting = true; setTimeout(typeRole, 1800); return; }
+  } else {
+    roleEl.textContent = word.slice(0, --ci);
+    if (ci === 0) { deleting = false; ri = (ri + 1) % roles.length; setTimeout(typeRole, 300); return; }
+  }
+  setTimeout(typeRole, deleting ? 45 : 80);
+}
+typeRole();
+
+/* ─── KNOWLEDGE GRAPH ─── */
+const graphData = {
+  nodes: [
+    { id: 'AI/ML', group: 'domain', size: 22 },
+    { id: 'Frontend', group: 'domain', size: 22 },
+    { id: 'Backend', group: 'domain', size: 18 },
+    { id: 'RAG', group: 'ai', size: 16 },
+    { id: 'LangGraph', group: 'ai', size: 12 },
+    { id: 'Pinecone', group: 'ai', size: 12 },
+    { id: 'LLMs', group: 'ai', size: 14 },
+    { id: 'Embeddings', group: 'ai', size: 11 },
+    { id: 'React', group: 'fe', size: 16 },
+    { id: 'TypeScript', group: 'fe', size: 15 },
+    { id: 'GraphQL', group: 'fe', size: 12 },
+    { id: 'Vue.js', group: 'fe', size: 11 },
+    { id: 'Node.js', group: 'be', size: 13 },
+    { id: 'Spring WebFlux', group: 'be', size: 11 },
+    { id: 'Kafka', group: 'be', size: 11 },
+    { id: 'Cassandra', group: 'be', size: 11 },
+  ],
+  links: [
+    { source: 'AI/ML', target: 'RAG' }, { source: 'AI/ML', target: 'LLMs' },
+    { source: 'AI/ML', target: 'Embeddings' }, { source: 'RAG', target: 'Pinecone' },
+    { source: 'RAG', target: 'LangGraph' }, { source: 'RAG', target: 'Embeddings' },
+    { source: 'Frontend', target: 'React' }, { source: 'Frontend', target: 'TypeScript' },
+    { source: 'Frontend', target: 'GraphQL' }, { source: 'Frontend', target: 'Vue.js' },
+    { source: 'Backend', target: 'Node.js' }, { source: 'Backend', target: 'Spring WebFlux' },
+    { source: 'Backend', target: 'Kafka' }, { source: 'Backend', target: 'Cassandra' },
+    { source: 'React', target: 'TypeScript' }, { source: 'LLMs', target: 'LangGraph' },
+    { source: 'Frontend', target: 'AI/ML' },
+  ]
+};
+
+const colors = {
+  domain: '#8cd2ff',
+  ai: '#60a5fa',
+  fe: '#93c5fd',
+  be: '#4b8db8'
+};
+
+function initGraph() {
+  const container = document.querySelector('.tile-skills');
+  const label = container.querySelector('.tile-label');
+  const labelH = label ? label.offsetHeight + 8 : 30;
+  const W = container.clientWidth - 32;
+  const H = container.clientHeight - labelH - 20;
+  if (W < 50 || H < 50) return;
+
+  const svg = d3.select('#graph-svg')
+    .attr('viewBox', `0 0 ${W} ${H}`)
+    .attr('preserveAspectRatio', 'xMidYMid meet');
+
+  svg.selectAll('*').remove();
+
+  const sim = d3.forceSimulation(graphData.nodes)
+    .force('link', d3.forceLink(graphData.links).id(d => d.id).distance(55).strength(0.6))
+    .force('charge', d3.forceManyBody().strength(-160))
+    .force('center', d3.forceCenter(W / 2, H / 2))
+    .force('collision', d3.forceCollide(d => d.size + 8));
+
+  const link = svg.append('g').selectAll('line')
+    .data(graphData.links).join('line')
+    .attr('stroke', 'rgba(140,210,255,0.15)')
+    .attr('stroke-width', 1);
+
+  const node = svg.append('g').selectAll('g')
+    .data(graphData.nodes).join('g')
+    .style('cursor', 'pointer');
+
+  node.append('circle')
+    .attr('r', d => d.size)
+    .attr('fill', d => colors[d.group] + '18')
+    .attr('stroke', d => colors[d.group])
+    .attr('stroke-width', 1.5)
+    .on('mouseover', function(event, d) {
+      d3.select(this).attr('fill', colors[d.group] + '35');
+      const tip = document.getElementById('graph-tooltip');
+      tip.textContent = d.id;
+      tip.style.opacity = '1';
+      tip.style.left = (event.offsetX + 12) + 'px';
+      tip.style.top = (event.offsetY - 8) + 'px';
+    })
+    .on('mousemove', function(event) {
+      const tip = document.getElementById('graph-tooltip');
+      tip.style.left = (event.offsetX + 12) + 'px';
+      tip.style.top = (event.offsetY - 8) + 'px';
+    })
+    .on('mouseout', function(event, d) {
+      d3.select(this).attr('fill', colors[d.group] + '18');
+      document.getElementById('graph-tooltip').style.opacity = '0';
+    });
+
+  node.append('text')
+    .text(d => d.id)
+    .attr('text-anchor', 'middle')
+    .attr('dy', '0.35em')
+    .attr('fill', d => d.group === 'domain' ? '#8cd2ff' : '#6b8399')
+    .attr('font-size', d => d.group === 'domain' ? '10px' : '8px')
+    .attr('font-family', "'Space Mono', monospace")
+    .attr('font-weight', d => d.group === 'domain' ? '700' : '400')
+    .style('pointer-events', 'none');
+
+  sim.on('tick', () => {
+    link
+      .attr('x1', d => Math.max(d.source.size, Math.min(W - d.source.size, d.source.x)))
+      .attr('y1', d => Math.max(d.source.size, Math.min(H - d.source.size, d.source.y)))
+      .attr('x2', d => Math.max(d.target.size, Math.min(W - d.target.size, d.target.x)))
+      .attr('y2', d => Math.max(d.target.size, Math.min(H - d.target.size, d.target.y)));
+    node.attr('transform', d => {
+      d.x = Math.max(d.size + 2, Math.min(W - d.size - 2, d.x));
+      d.y = Math.max(d.size + 2, Math.min(H - d.size - 2, d.y));
+      return `translate(${d.x},${d.y})`;
+    });
+  });
+}
+
+setTimeout(initGraph, 300);
+window.addEventListener('resize', () => { setTimeout(initGraph, 100); });
+
+/* ─── AI CHAT ─── */
+const SYSTEM_PROMPT = `You are Shravanthi Vadrevu's AI portfolio assistant. Answer questions about her concisely and warmly. Keep answers under 120 words.
+
+About Shravanthi:
+- Full Stack Engineer & AI Engineer with 12+ years experience, predominantly frontend-focused
+- Currently Team Lead on consent strategy product (Spring WebFlux, Cassandra, Kafka, OneTrust integration)
+- Skills: React, TypeScript, GraphQL, Vue.js, Node.js, Docker, AWS, D3.js, Material UI, Redux
+- AI/ML focus: RAG systems, Pinecone vector DB, BGE-small embeddings, LangGraph, LangChain, Llama 3.3-70B (Nebius), Neo4j, hybrid retrieval (dense+BM25), cross-encoder reranking
+- Projects: Hotel Revenue RAG system (cohort project), PromptCraft (ChatGPT app), KidLearn Assessment (D3.js EdTech), LangChain weather agent, autocomplete search component, weather app
+- Former companies: ScienceLogic (senior frontend), Capital One
+- Education: Taking RAG/AI course with Aishwarya Srinivasan and Arvind Narayanamurthy
+- Writing: Substack at shravanthivr.substack.com
+- Open to: AI engineering, full stack, senior/lead roles
+- Email: shravanthivadrevu@gmail.com
+- GitHub: github.com/shravanthivr
+- LinkedIn: linkedin.com/in/shravanthi-vadrevu-radha/
+- Location: USA
+
+Be concise, specific, and enthusiastic about her work.`;
+
+let chatHistory = [];
+
+async function callClaude(userMsg) {
+  chatHistory.push({ role: 'user', content: userMsg });
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 1000,
+      system: SYSTEM_PROMPT,
+      messages: chatHistory
+    })
+  });
+  const data = await response.json();
+  const reply = data.content?.[0]?.text || "Sorry, I couldn't fetch a response right now.";
+  chatHistory.push({ role: 'assistant', content: reply });
+  return reply;
+}
+
+function addBubble(text, isUser) {
+  const msgs = document.getElementById('chat-messages');
+  const wrapper = document.createElement('div');
+  if (!isUser) {
+    const sender = document.createElement('div');
+    sender.className = 'bubble-sender';
+    sender.textContent = 'shravanthi.ai';
+    wrapper.appendChild(sender);
+  }
+  const bubble = document.createElement('div');
+  bubble.className = 'chat-bubble ' + (isUser ? 'bubble-user' : 'bubble-ai');
+  bubble.textContent = text;
+  wrapper.appendChild(bubble);
+  msgs.appendChild(wrapper);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function addTyping() {
+  const msgs = document.getElementById('chat-messages');
+  const el = document.createElement('div');
+  el.className = 'typing-indicator';
+  el.id = 'typing';
+  for (let i = 0; i < 3; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'typing-dot';
+    el.appendChild(dot);
+  }
+  msgs.appendChild(el);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function removeTyping() {
+  const t = document.getElementById('typing');
+  if (t) t.remove();
+}
+
+async function sendChat() {
+  const input = document.getElementById('chat-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+  document.getElementById('suggestions').style.display = 'none';
+  addBubble(msg, true);
+  addTyping();
+  try {
+    const reply = await callClaude(msg);
+    removeTyping();
+    addBubble(reply, false);
+  } catch(e) {
+    removeTyping();
+    addBubble("Hmm, couldn't connect right now. Try again in a moment!", false);
+  }
+}
+
+function sendSuggestion(btn) {
+  document.getElementById('chat-input').value = btn.textContent;
+  sendChat();
+}
+</script>
+</body>
+</html>
